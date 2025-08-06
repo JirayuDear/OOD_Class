@@ -11,13 +11,10 @@ class LinkedList:
         self.head = None
         self.prev_repo = 0
         self.same_repo = False
-        self.prev_id = 0
-        self.prev2_id = [0]
-        self.commit_branch = []
-        self.merge = 0
+        self.queen_limit = 0
         self.size = 0
         self.zero = 0
-
+        self.index = 0
 
     def insert(self, data):
         p = Node(data)
@@ -91,70 +88,63 @@ class LinkedList:
             print(p.data, end="")
             p = p.next
             if p != None:
-                print(" <- ", end="")
+                print(" → ", end="")
 
-    def check_same_repo(self):
-        p = self.head
-        while p != None:
-            if p.next != None and p.next.data == None:
-                if self.prev_repo == 0:
-                    self.prev_repo = p.data
-                elif self.prev_repo == p.data:
-                    self.prev_repo = p.data
-                    self.same_repo = True
-                else: 
-                    self.prev_repo = p.data
-                    self.same_repo = False
-                    break
-            p = p.next
-        print(f"Are these branches in the same repository? {self.same_repo}")
-        if not self.same_repo:
+    def new_order(self, k):
+        if k <= 1 or self.head is None:
             return
-        return self.check_merge()
+        
+        curr = self.head
+        prev_end = None  
+        is_reverse = True
 
-    def check_merge(self):
-        p = self.head
-        while p != None:
-            t = p.next
-            if p.next.data in self.prev2_id:
-                break
-            if p.next != None:
-                self.prev_id = p.next.data
-                if p.next.data == None:
-                    p = p.next.next
-                    continue
-            while t != None:
-                if t.data != None and t.next.data != None:
-                    t = t.next
-                    if t.data == self.prev_id and self.prev_id not in self.prev2_id:
-                        self.commit_branch.append(p.data)
-                        if (p.data in self.commit_branch and p.data in self.prev2_id ):
-                            break
-                        self.merge += 1
-                        self.prev2_id.append(self.prev_id) 
-                        t = t.next
-                        break
-                else: t = t.next
-            p = p.next
-        print(f"{self.merge} Merge(s)")
+        while curr:
+            group_start = curr
+            group_end = curr
 
+            for i in range(k - 1):
+                if group_end.next:
+                    group_end = group_end.next
+                
+            next_group = group_end.next
 
+            if is_reverse:
+                prev = next_group
+                p = group_start
+                while p != next_group:
+                    temp = p.next
+                    p.next = prev
+                    prev = p
+                    p = temp
+                if prev_end is None:
+                    self.head = group_end
+                else:
+                    prev_end.next = group_end
+                prev_end = group_start
+                curr = next_group
+            else:
+                prev_end = group_end
+                curr = next_group
 
+            is_reverse = not is_reverse
 
+print(" *** Ant Army ***")
+ini_data = input("Input : ").split(",")
+data = ini_data[0].split(" ")
 
-data = input("Git History: ").split("|")
-new_data = []
-for item in data:
-    new_data.append(item.split(" -> "))
-# print(new_data)
+k = ini_data[1]
 
 L = LinkedList()
 
-for item in new_data:
-    for i in item:
-        L.insert(i.strip(" "))
-    L.insert(None)
+for item in data:
+    L.insert(item)
 
-# L.printList()
+print("Before : ", end="")
+L.printList()
 
-L.check_same_repo()
+L.new_order(int(k))
+
+print()
+
+print("After : ", end="")
+L.printList()

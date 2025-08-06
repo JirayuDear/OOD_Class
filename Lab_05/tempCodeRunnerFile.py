@@ -1,4 +1,2 @@
 
-                        b = p.next.data
-  
-                        self.insertAfter(i+1, a
+            # print(group_end.data)

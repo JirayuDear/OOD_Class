@@ -9,15 +9,14 @@ class Node:
 class LinkedList:
     def __init__(self):
         self.head = None
+        # self.counted = None
         self.prev_repo = 0
         self.same_repo = False
-        self.prev_id = 0
-        self.prev2_id = [0]
-        self.commit_branch = []
         self.merge = 0
         self.size = 0
         self.zero = 0
-
+        self.prev_A = 0
+        self.prev_B = 0
 
     def insert(self, data):
         p = Node(data)
@@ -93,52 +92,44 @@ class LinkedList:
             if p != None:
                 print(" <- ", end="")
 
-    def check_same_repo(self):
+    def get_tail(self):
         p = self.head
         while p != None:
-            if p.next != None and p.next.data == None:
-                if self.prev_repo == 0:
-                    self.prev_repo = p.data
-                elif self.prev_repo == p.data:
-                    self.prev_repo = p.data
-                    self.same_repo = True
-                else: 
-                    self.prev_repo = p.data
-                    self.same_repo = False
-                    break
+            if p.next == None:
+                return p.data
             p = p.next
-        print(f"Are these branches in the same repository? {self.same_repo}")
-        if not self.same_repo:
-            return
-        return self.check_merge()
 
-    def check_merge(self):
+    def check_merge(self, link_list, my_index, counted):
+        merge = 0
         p = self.head
-        while p != None:
-            t = p.next
-            if p.next.data in self.prev2_id:
+
+        while p != None and p.next != None:
+            current_data = p.data
+
+            if p.next == None:
                 break
-            if p.next != None:
-                self.prev_id = p.next.data
-                if p.next.data == None:
-                    p = p.next.next
+
+            for i in range(len(link_list)):
+                if i == my_index:
                     continue
-            while t != None:
-                if t.data != None and t.next.data != None:
-                    t = t.next
-                    if t.data == self.prev_id and self.prev_id not in self.prev2_id:
-                        self.commit_branch.append(p.data)
-                        if (p.data in self.commit_branch and p.data in self.prev2_id ):
-                            break
-                        self.merge += 1
-                        self.prev2_id.append(self.prev_id) 
-                        t = t.next
-                        break
-                else: t = t.next
+
+                q = link_list[i].head
+                while q != None and q.next != None:
+                    if q.data == current_data and q.next.data != p.next.data:
+                        r = counted.head
+                        already_counted = False
+                        while r != None:
+                            if r.data == q.data:
+                                already_counted = True
+                                break
+                            r = r.next
+                        if not already_counted:
+                            merge += 1
+                            counted.insert(current_data)
+                    q = q.next
             p = p.next
-        print(f"{self.merge} Merge(s)")
 
-
+        return merge
 
 
 
@@ -146,15 +137,27 @@ data = input("Git History: ").split("|")
 new_data = []
 for item in data:
     new_data.append(item.split(" -> "))
-# print(new_data)
 
-L = LinkedList()
+link_list = []
+same_repo = False
+merge = 0
 
 for item in new_data:
+    L = LinkedList()
     for i in item:
         L.insert(i.strip(" "))
-    L.insert(None)
+    link_list.append(L)
+    
+counted = LinkedList()
 
-# L.printList()
+def check_repo():
+    for i in range(len(link_list)-1):
+        if link_list[i].get_tail() != link_list[i+1].get_tail():
+            return False
+    return True
+print(f"Are these branches in the same repository? {check_repo()}")
 
-L.check_same_repo()
+if check_repo():
+    for i in range(len(link_list)):
+        merge += link_list[i].check_merge(link_list, i, counted)
+    print(f"{merge} Merge(s)")
