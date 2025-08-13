@@ -9,12 +9,14 @@ class Node:
 class LinkedList:
     def __init__(self):
         self.head = None
+        # self.counted = None
         self.prev_repo = 0
         self.same_repo = False
-        self.queen_limit = 0
+        self.merge = 0
         self.size = 0
         self.zero = 0
-        self.index = 0
+        self.prev_A = 0
+        self.prev_B = 0
 
     def insert(self, data):
         p = Node(data)
@@ -88,83 +90,74 @@ class LinkedList:
             print(p.data, end="")
             p = p.next
             if p != None:
-                print(" → ", end="")
+                print(" <- ", end="")
 
-    def new_order(self, k):
-        if k <= 1 or self.head is None:
-            return
-<<<<<<< HEAD
-        
-=======
+    def get_tail(self):
+        p = self.head
+        while p != None:
+            if p.next == None:
+                return p.data
+            p = p.next
 
->>>>>>> f52a2f621d6344a802f89ba77cf8f5c1d4ff0eff
-        curr = self.head
-        prev_end = None  
-        is_reverse = True
+    def check_merge(self, link_list, my_index, counted):
+        merge = 0
+        p = self.head
 
-        while curr:
-            group_start = curr
-            group_end = curr
+        while p != None and p.next != None:
+            current_data = p.data
 
-            for i in range(k - 1):
-                if group_end.next:
-                    group_end = group_end.next
-<<<<<<< HEAD
-                # else:
-                #     return
-                
-=======
-                else:
-                    return
+            if p.next == None:
+                break
 
->>>>>>> f52a2f621d6344a802f89ba77cf8f5c1d4ff0eff
-            next_group = group_end.next
+            for i in range(len(link_list)):
+                if i == my_index:
+                    continue
 
-            if is_reverse:
-                prev = next_group
-                p = group_start
-                while p != next_group:
-                    temp = p.next
-                    p.next = prev
-                    prev = p
-                    p = temp
-                if prev_end is None:
-                    self.head = group_end
-                else:
-                    prev_end.next = group_end
-                prev_end = group_start
-                curr = next_group
-            else:
-                prev_end = group_end
-                curr = next_group
+                q = link_list[i].head
+                while q != None and q.next != None:
+                    if q.data == current_data and q.next.data != p.next.data:
+                        r = counted.head
+                        already_counted = False
+                        while r != None:
+                            if r.data == q.data:
+                                already_counted = True
+                                break
+                            r = r.next
+                        if not already_counted:
+                            merge += 1
+                            counted.insert(current_data)
+                    q = q.next
+            p = p.next
 
-<<<<<<< HEAD
-            curr = next_group
-
-            is_reverse = not is_reverse
-
-=======
-            is_reverse = not is_reverse
+        return merge
 
 
->>>>>>> f52a2f621d6344a802f89ba77cf8f5c1d4ff0eff
-print(" *** Ant Army ***")
-ini_data = input("Input : ").split(",")
-data = ini_data[0].split(" ")
 
-k = ini_data[1]
-
-L = LinkedList()
-
+data = input("Git History: ").split("|")
+new_data = []
 for item in data:
-    L.insert(item)
+    new_data.append(item.split(" -> "))
 
-print("Before : ", end="")
-L.printList()
+link_list = []
+same_repo = False
+merge = 0
 
-L.new_order(int(k))
+for item in new_data:
+    L = LinkedList()
+    for i in item:
+        L.insert(i.strip(" "))
+    link_list.append(L)
+    
+counted = LinkedList()
 
-print()
+def check_repo():
+    for i in range(len(link_list)-1):
+        if link_list[i].get_tail() != link_list[i+1].get_tail():
+            return False
+    return True
+print(f"Are these branches in the same repository? {check_repo()}")
 
-print("After : ", end="")
-L.printList()
+if check_repo():
+    for i in range(len(link_list)):
+        merge += link_list[i].check_merge(link_list, i, counted)
+    print(f"{merge} Merge(s)")

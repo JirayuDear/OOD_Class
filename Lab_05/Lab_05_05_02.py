@@ -93,11 +93,7 @@ class LinkedList:
     def new_order(self, k):
         if k <= 1 or self.head is None:
             return
-<<<<<<< HEAD
         
-=======
-
->>>>>>> f52a2f621d6344a802f89ba77cf8f5c1d4ff0eff
         curr = self.head
         prev_end = None  
         is_reverse = True
@@ -109,15 +105,7 @@ class LinkedList:
             for i in range(k - 1):
                 if group_end.next:
                     group_end = group_end.next
-<<<<<<< HEAD
-                # else:
-                #     return
                 
-=======
-                else:
-                    return
-
->>>>>>> f52a2f621d6344a802f89ba77cf8f5c1d4ff0eff
             next_group = group_end.next
 
             if is_reverse:
@@ -138,16 +126,8 @@ class LinkedList:
                 prev_end = group_end
                 curr = next_group
 
-<<<<<<< HEAD
-            curr = next_group
-
             is_reverse = not is_reverse
 
-=======
-            is_reverse = not is_reverse
-
-
->>>>>>> f52a2f621d6344a802f89ba77cf8f5c1d4ff0eff
 print(" *** Ant Army ***")
 ini_data = input("Input : ").split(",")
 data = ini_data[0].split(" ")

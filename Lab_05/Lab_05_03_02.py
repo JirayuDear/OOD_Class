@@ -9,7 +9,6 @@ class Node:
 class LinkedList:
     def __init__(self):
         self.head = None
-<<<<<<< HEAD
         # self.counted = None
         self.prev_repo = 0
         self.same_repo = False
@@ -18,17 +17,6 @@ class LinkedList:
         self.zero = 0
         self.prev_A = 0
         self.prev_B = 0
-=======
-        self.prev_repo = 0
-        self.same_repo = False
-        self.prev_id = 0
-        self.prev2_id = [0]
-        self.commit_branch = []
-        self.merge = 0
-        self.size = 0
-        self.zero = 0
-
->>>>>>> f52a2f621d6344a802f89ba77cf8f5c1d4ff0eff
 
     def insert(self, data):
         p = Node(data)
@@ -104,50 +92,10 @@ class LinkedList:
             if p != None:
                 print(" <- ", end="")
 
-<<<<<<< HEAD
-    def get_tail(self):
-        p = self.head
-        while p != None:
-            if p.next == None:
-                return p.data
-            p = p.next
-
-    def check_merge(self, link_list, my_index, counted):
-        merge = 0
-        p = self.head
-
-        while p != None and p.next != None:
-            current_data = p.data
-
-            if p.next == None:
-                break
-
-            for i in range(len(link_list)):
-                if i == my_index:
-                    continue
-
-                q = link_list[i].head
-                while q != None and q.next != None:
-                    if q.data == current_data and q.next.data != p.next.data:
-                        r = counted.head
-                        already_counted = False
-                        while r != None:
-                            if r.data == q.data:
-                                already_counted = True
-                                break
-                            r = r.next
-                        if not already_counted:
-                            merge += 1
-                            counted.insert(current_data)
-                    q = q.next
-            p = p.next
-
-        return merge
-=======
     def check_same_repo(self):
         p = self.head
         while p != None:
-            if p.next != None and p.next.data == None:
+            if p.next != None and p.next.data == "|":
                 if self.prev_repo == 0:
                     self.prev_repo = p.data
                 elif self.prev_repo == p.data:
@@ -163,42 +111,57 @@ class LinkedList:
             return
         return self.check_merge()
 
-    def check_merge(self):
+    def check_merge(self, link_list, my_index):
+        p = self.head                   
+        merge = 0            
+
+        for i in range(my_index, len(link_list)):
+            if i == my_index:
+                continue
+            if self.head.data == link_list[i].head.data:
+                return merge
+
+            p = self.head
+            prev_A = p
+            prev_B = p.next    
+
+            while prev_B is not None:
+                t = link_list[i].head
+                while t is not None and t.next is not None:
+                    if prev_B.data == t.next.data and prev_A.data != t.data:
+                        check = True
+                        c = counted.head
+                        while c is not None:
+                            if prev_B.data == c.data:
+                                check = False
+                                break
+                            c = c.next
+
+                        if check:
+                            counted.insert(prev_B.data)
+                            merge += 1
+
+                    t = t.next
+                p = p.next
+                prev_A = p
+                prev_B = p.next
+        return merge
+
+    def get_tail(self):
         p = self.head
         while p != None:
-            t = p.next
-            if p.next.data in self.prev2_id:
-                break
-            if p.next != None:
-                self.prev_id = p.next.data
-                if p.next.data == None:
-                    p = p.next.next
-                    continue
-            while t != None:
-                if t.data != None and t.next.data != None:
-                    t = t.next
-                    if t.data == self.prev_id and self.prev_id not in self.prev2_id:
-                        self.commit_branch.append(p.data)
-                        if (p.data in self.commit_branch and p.data in self.prev2_id ):
-                            break
-                        self.merge += 1
-                        self.prev2_id.append(self.prev_id) 
-                        t = t.next
-                        break
-                else: t = t.next
+            if p.next == None:
+                return p.data
             p = p.next
-        print(f"{self.merge} Merge(s)")
 
-
->>>>>>> f52a2f621d6344a802f89ba77cf8f5c1d4ff0eff
-
-
+    def get_head(self):
+        return self.head
 
 data = input("Git History: ").split("|")
 new_data = []
 for item in data:
     new_data.append(item.split(" -> "))
-<<<<<<< HEAD
+# print(new_data)
 
 link_list = []
 same_repo = False
@@ -210,30 +173,21 @@ for item in new_data:
         L.insert(i.strip(" "))
     link_list.append(L)
     
+# L.check_same_repo()
 counted = LinkedList()
 
 def check_repo():
     for i in range(len(link_list)-1):
-        if link_list[i].get_tail() != link_list[i+1].get_tail():
-            return False
-    return True
+        if link_list[i].get_tail() == link_list[i+1].get_tail():
+            same_repo = True
+        else: 
+            same_repo = False
+            return same_repo
+        return same_repo
+    
 print(f"Are these branches in the same repository? {check_repo()}")
 
 if check_repo():
     for i in range(len(link_list)):
-        merge += link_list[i].check_merge(link_list, i, counted)
+        merge += link_list[i].check_merge(link_list, i)
     print(f"{merge} Merge(s)")
-=======
-# print(new_data)
-
-L = LinkedList()
-
-for item in new_data:
-    for i in item:
-        L.insert(i.strip(" "))
-    L.insert(None)
-
-# L.printList()
-
-L.check_same_repo()
->>>>>>> f52a2f621d6344a802f89ba77cf8f5c1d4ff0eff
