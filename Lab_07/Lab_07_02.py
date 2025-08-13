@@ -17,8 +17,6 @@ class BST:
         if not self.root:
             self.root = Node(data)
             return
-        # if self.check_insert(data):
-        #     return
         if self.root != None:
             if data >= p.data and p.right == None:
                 p.right = Node(data)
@@ -31,18 +29,6 @@ class BST:
             elif data < p.data:
                 self.insert(data, p.left)
         return self.root
-    
-    # def check_insert(self, data, node = None):
-    #     p = self.root if node is None else node
-    #     if p.data == data:
-    #         return True
-    #     if p.left is not None:
-    #         if self.check_insert(data, p.left):
-    #             return True
-    #     if p.right is not None:
-    #         if self.check_insert(data, p.right):
-    #             return True
-    #     return False
         
     def check_sum_path(self, target, node=None):
         if node is None:

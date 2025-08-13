@@ -18,7 +18,6 @@ class BST:
         if not self.root:              
             self.root = new_node
             return
-
         q = [self.root]               
         while q:
             p = q.pop(0)               
@@ -44,26 +43,7 @@ class BST:
             self._inOrder(root.left)
             self._inOrder(root.right)
 
-    # def mirror(self, depth):
-    #     q = [self.root]    
-    #     tree = []          
-    #     while q:
-    #         if q:
-    #             p = q.pop(0)  
-    #             tree.append(p)
-    #         if p.left and p.right:
-    #             q.append(p.left)
-    #             q.append(p.right)
 
-    #     if tree.pop(0) == self.root and depth == 1:
-    #         p = self.root
-    #         self.swap_leaf(p.left)
-    #         self.swap_leaf(p.right)
-    #         return
-
-    #     for i in range(depth-1):
-    #         l = tree.pop(0)
-    #         r = tree.pop(0)
     def mirror(self, depth, node, current_depth=1):
         if depth == 0:
             self.swap_leaf(self.root)
