@@ -10,9 +10,15 @@ class Node:
 class BST:
     def __init__(self, root = None):
         self.root = None if root is None else Node(root)
+        self.sum_path = False
 
     def insert(self, data, node = None):
         p = self.root if node is None else node
+        if not self.root:
+            self.root = Node(data)
+            return
+        # if self.check_insert(data):
+        #     return
         if self.root != None:
             if data >= p.data and p.right == None:
                 p.right = Node(data)
@@ -25,47 +31,49 @@ class BST:
             elif data < p.data:
                 self.insert(data, p.left)
         return self.root
-
-    def check_sum_path(self, target, node = None, sum = 0):
-        p = self.root if node is None else node
+    
+    # def check_insert(self, data, node = None):
+    #     p = self.root if node is None else node
+    #     if p.data == data:
+    #         return True
+    #     if p.left is not None:
+    #         if self.check_insert(data, p.left):
+    #             return True
+    #     if p.right is not None:
+    #         if self.check_insert(data, p.right):
+    #             return True
+    #     return False
         
-        sum += p.data
-        
-        if p.left is None and p.right is None:
-            return sum == target 
-
-        if p.left is not None:
-            if self.check_sum_path(target, p.left, sum):
-                return True
-        if p.right is not None:
-            if self.check_sum_path(target, p.right, sum):
-                return True
-        
-        return False
-
+    def check_sum_path(self, target, node=None):
+        if node is None:
+            return False
+        if node.left is None and node.right is None:
+            return target == node.data
+        return (self.check_sum_path(target - node.data, node.left) or
+                self.check_sum_path(target - node.data, node.right))
+                
     def printTree(self, node, level = 0):
         if node != None:
             self.printTree(node.right, level + 1)
             print('     ' * level, node)
             self.printTree(node.left, level + 1)
 
-    def traversal(self, node):
-        if node != None:
-            self.traversal(node.left)
-            print(node, end=" ")
-            self.traversal(node.right)
+    def inOrder(self):
+        BST._inOrder(self.root)
+        
+    def _inOrder(root):
+        if root:
+            BST._inOrder(root.left)
+            print(root.data, end = ' ')
+            BST._inOrder(root.right)
 
-inp = [i.strip() for i in input('Enter the values to insert into BST and target sum : ').split("/")]
+inp = [i.strip() for i in input('Enter the values to insert into BST and target sum : ').split(" / ")]
 target = int(inp.pop())             
 values = [int(i) for i in inp[0].split()]
-T = BST(values[0])
-values.pop(0)
-
+T = BST()
 for i in values:
     root = T.insert(i)
-
 print("Inorder Traversal of BST : ", end="")
-T.traversal(root) 
+T.inOrder()
 print()
-
-print(f"Path with sum {target} exists : {T.check_sum_path(target)}")
+print(f"Path with sum {target} exists : {T.check_sum_path(target, T.root)}")

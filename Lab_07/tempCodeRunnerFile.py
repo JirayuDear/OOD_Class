@@ -1,2 +1,2 @@
-)
-            print(node, end=" ")
+
+    def mirror(self, depth, node):
