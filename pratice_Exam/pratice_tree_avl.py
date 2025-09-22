@@ -28,7 +28,7 @@ class AVLTree:
 
         self.updateHeight(node)
         balance = self.balanceValue(node)
-
+        #left + right -
         if balance < -1:
             if self.balanceValue(node.right) > 0:
                 node.right = self.rightRotate(node.right)
